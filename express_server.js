@@ -15,14 +15,28 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  console.log("u redirecting");
+  let shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.send(`Invalid URL : ${shortURL}\nPlease include "https://" in your URL`);
+  }
+});
+
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  let newShortURL = generateRandomString();
+  let newLongURL = req.body.longURL;
+  urlDatabase[newShortURL] = newLongURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${newShortURL}`);
 });
 
 app.get("/urls/new", (req, res) => {
