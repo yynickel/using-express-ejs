@@ -3,6 +3,8 @@ var app = express();
 var PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -16,6 +18,15 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -35,3 +46,17 @@ app.get("/hello", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+function generateRandomString() {
+  let result = [];
+  for (let i = 0; i < 6; i++) {
+    let r = Math.floor(Math.random() * 62);
+    if (r < 26) {
+      result.push(String.fromCharCode(65 + r));
+    } else if (r < 52) {
+      result.push(String.fromCharCode(r + 71));
+    } else result.push(String.fromCharCode(r - 4));
+  }
+  return result.join("");
+}
